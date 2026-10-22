@@ -287,3 +287,194 @@ flowchart LR
     style STU fill:#d1fae5,stroke:#34d399,stroke-dasharray:3 3
     style FIN fill:#d1fae5,stroke:#34d399,stroke-dasharray:3 3
 ```
+## 3. UML class diagram
+```mermaid
+---
+config:
+  class:
+    hideEmptyMembersBox: true
+  theme: base
+  look: handDrawn
+  fontFamily: '''Merriweather Variable'', serif'
+  themeVariables:
+    fontFamily: '''Merriweather Variable'', serif'
+---
+classDiagram
+direction TB
+    class Role {
+        STUDENT
+        ADMIN
+        ADVISOR
+    }
+
+    class ApplicationStatus {
+        PENDING
+        ACCEPTED
+        REJECTED
+    }
+
+    class PaymentStatus {
+        PENDING
+        PAID
+        FAILED
+    }
+
+    class User {
+        +int id
+        +String fullName
+        +String email
+        -String passwordHash
+        +Role role
+        +String phone
+        +Date createdAt
+        +Date updatedAt
+        +login() : boolean
+        +updateProfile() : void
+    }
+
+    class Student {
+        +String nationality
+        -String passportNumber
+        +Date dateOfBirth
+        +EnrollmentStatus status
+        +applyToProgram(Program) : Application
+        +enrollInCourse(Course) : Enrollment
+        +makePayment(amount) : Payment
+    }
+
+    class Advisor {
+        +String department
+        +String office
+        +reviewApplication(Application) : void
+        +assignHousing(Student, Housing) : HousingAssignment
+    }
+
+    class University {
+        +int id
+        +String name
+        +String country
+        +String city
+        +String website
+        +getPrograms() : Program[]
+    }
+
+    class Program {
+        +int id
+        +String name
+        +DegreeLevel degreeLevel
+        +int durationYears
+        +String language
+        +getAvailableCourses() : Course[]
+    }
+
+    class Course {
+        +int id
+        +String code
+        +String title
+        +int credits
+        +generateSyllabus() : Document
+    }
+
+    class Enrollment {
+        +int id
+        +String semester
+        +String grade
+        +updateGrade(String) : void
+    }
+
+    class Application {
+        +int id
+        +ApplicationStatus status
+        +String intakeSemester
+        +Date submittedAt
+        +updateStatus(ApplicationStatus) : void
+        +attachDocument(Document) : void
+    }
+
+    class Document {
+        +int id
+        +DocumentType type
+        +String fileUrl
+        +Date uploadedAt
+        +verifyAuthenticity() : boolean
+    }
+
+    class Visa {
+        +int id
+        +String visaType
+        +Date issueDate
+        +Date expiryDate
+        +VisaStatus status
+        +checkValidity() : boolean
+    }
+
+    class Housing {
+        +int id
+        +String name
+        +String address
+        +Decimal monthlyRent
+        +int capacity
+        +checkAvailability() : boolean
+    }
+
+    class HousingAssignment {
+        +int id
+        +Date startDate
+        +Date endDate
+        +terminateContract() : void
+    }
+
+    class Payment {
+        +int id
+        +Decimal amount
+        +PaymentPurpose purpose
+        +PaymentStatus status
+        +Date paidAt
+        +processTransaction() : boolean
+        +generateReceipt() : Document
+    }
+
+    class Notification {
+        +int id
+        +String message
+        +boolean isRead
+        +Date createdAt
+        +markAsRead() : void
+    }
+
+    <<enumeration>> Role
+    <<enumeration>> ApplicationStatus
+    <<enumeration>> PaymentStatus
+    <<Abstract>> User
+
+    User <-- Student
+    User <-- Advisor
+    University "1" -- "*" Program : offers
+    Program "1" --> "*" Course : includes
+    Student "1" --> "*" Enrollment : has
+    Course "1" --> "*" Enrollment : contains
+    Student "1" --> "*" Application : submits
+    Program "1" --> "*" Application : receives
+    Advisor "1" --> "*" Application : manages
+    Student "1" --> "*" Document : owns
+    Application "1" --> "*" Document : requires
+    Student "1" --> "1..*" Visa : holds
+    University "1" --|> "*" Housing : provides
+    Student "1" -- "*" HousingAssignment : receives
+    Housing "1" -- "*" HousingAssignment : booked_via
+    Student "1" -- "*" Payment : makes
+    User "1" -- "*" Notification : receives
+
+    class Student:::Aqua
+    class University:::Sky
+    class Program:::Pine
+    class Course:::Aqua
+    class HousingAssignment:::Ash
+    class Payment:::Rose
+
+    classDef Aqua :,stroke-width:1px,stroke-dasharray:none,stroke:#46EDC8,fill:#DEFFF8,color:#378E7A,stroke-width:1px,stroke-dasharray:none,stroke:#46EDC8,fill:#DEFFF8,color:#378E7A
+    classDef Rose :,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236
+    classDef Sky :,stroke-width:1px,stroke-dasharray:none,stroke:#374D7C,fill:#E2EBFF,color:#374D7C
+    classDef Pine :,stroke-width:1px,stroke-dasharray:none,stroke:#254336,fill:#27654A,color:#FFFFFF
+    classDef Ash :,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000
+```
