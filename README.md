@@ -427,7 +427,7 @@ flowchart LR
 - **Postcondition:** `<The meeting is saved and the student receives an email>`
 
 
-## 3. UML class diagram
+## 4. UML class diagram
 ```mermaid
 ---
 config:
