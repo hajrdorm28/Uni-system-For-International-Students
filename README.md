@@ -609,6 +609,7 @@ direction BT
 	class ApplicationStatus:::Ash
 	class PaymentStatus:::Ash
 	class User:::Rose
+    class User:::Ash
 
 	classDef Rose :,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236
 	classDef Ash :,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000
@@ -772,6 +773,9 @@ erDiagram
 	style HOUSING stroke:#000000
 	style HOUSING_ASSIGNMENT stroke:#000000
 	style PAYMENT stroke:#000000
-	style NOTIFICATION stroke:#000000
+	style ADVISOR stroke:#000000
+    style PROGRAM stroke:#000000
+    style NOTIFICATION stroke:#000000
+    
 
 ```
