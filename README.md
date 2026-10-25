@@ -613,3 +613,165 @@ direction BT
 	classDef Rose :,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236
 	classDef Ash :,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000
 ```
+
+## 4. ERD 
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: '#d1fae5'
+    primaryTextColor: '#000000'
+    primaryBorderColor: '#'
+    lineColor: '#000000'
+    secondaryColor: '#7dd3fc'
+    tertiaryColor: '#ecfdf5'
+    fontFamily: '''Merriweather Variable'', serif'
+  look: neo
+  fontFamily: '''Merriweather Variable'', serif'
+---
+erDiagram
+	direction TB
+	USER {
+		int id PK ""  
+		string fullName  ""  
+		string email  ""  
+		string passwordHash  ""  
+		string role  "ENUM: STUDENT, ADMIN, ADVISOR"  
+		string phone  ""  
+		date createdAt  ""  
+		date updatedAt  ""  
+	}
+
+	STUDENT {
+		int user_id PK,FK ""  
+		string nationality  ""  
+		string passportNumber  ""  
+		date dateOfBirth  ""  
+		string status  ""  
+	}
+
+	ADVISOR {
+		int user_id PK,FK ""  
+		string department  ""  
+		string office  ""  
+	}
+
+	UNIVERSITY {
+		int id PK ""  
+		string name  ""  
+		string country  ""  
+		string city  ""  
+		string website  ""  
+	}
+
+	PROGRAM {
+		int id PK ""  
+		string name  ""  
+		string degreeLevel  ""  
+		int durationYears  ""  
+		string language  ""  
+		int university_id FK ""  
+	}
+
+	COURSE {
+		int id PK ""  
+		string code  ""  
+		string title  ""  
+		int credits  ""  
+		int program_id FK ""  
+	}
+
+	APPLICATION {
+		int id PK ""  
+		string status  "ENUM: PENDING, ACCEPTED, REJECTED"  
+		string intakeSemester  ""  
+		date submittedAt  ""  
+		int student_id FK ""  
+		int program_id FK ""  
+		int advisor_id FK ""  
+	}
+
+	DOCUMENT {
+		int id PK ""  
+		string type  ""  
+		string fileUrl  ""  
+		date uploadedAt  ""  
+		int student_id FK "Nullable"  
+		int application_id FK "Nullable"  
+	}
+
+	VISA {
+		int id PK ""  
+		string visaType  ""  
+		date issueDate  ""  
+		date expiryDate  ""  
+		string status  ""  
+		int student_id FK ""  
+	}
+
+	HOUSING {
+		int id PK ""  
+		string name  ""  
+		string address  ""  
+		decimal monthlyRent  ""  
+		int capacity  ""  
+		int university_id FK ""  
+	}
+
+	HOUSING_ASSIGNMENT {
+		int id PK ""  
+		date startDate  ""  
+		date endDate  ""  
+		int student_id FK ""  
+		int housing_id FK ""  
+	}
+
+	PAYMENT {
+		int id PK ""  
+		decimal amount  ""  
+		string purpose  ""  
+		string status  "ENUM: PENDING, PAID, FAILED"  
+		date paidAt  ""  
+		int student_id FK ""  
+	}
+
+	NOTIFICATION {
+		int id PK ""  
+		string message  ""  
+		boolean isRead  ""  
+		date createdAt  ""  
+		int user_id FK ""  
+	}
+
+	USER||--o|STUDENT:"is a"
+	USER||--o|ADVISOR:"is a"
+	UNIVERSITY||--o{PROGRAM:"offers"
+	PROGRAM||--o{COURSE:"includes"
+	STUDENT||--o{APPLICATION:"submits"
+	PROGRAM||--o{APPLICATION:"receives"
+	ADVISOR||--o{APPLICATION:"manages"
+	STUDENT||--o{DOCUMENT:"owns"
+	APPLICATION||--o{DOCUMENT:"requires"
+	STUDENT||--|{VISA:"holds"
+	UNIVERSITY||--o{HOUSING:"provides"
+	STUDENT||--o{HOUSING_ASSIGNMENT:"receives"
+	HOUSING||--o{HOUSING_ASSIGNMENT:"booked_via"
+	STUDENT||--o{PAYMENT:"makes"
+	USER||--o{NOTIFICATION:"receives"
+
+	style USER stroke:#000000
+	style STUDENT stroke:#000000
+
+	style UNIVERSITY stroke:#000000
+
+	style COURSE stroke:#000000
+	style APPLICATION ::::::::::stroke-width:2px,stroke-dasharray:0,stroke:#000000
+	style DOCUMENT stroke:#000000
+	style VISA stroke:#000000
+	style HOUSING stroke:#000000
+	style HOUSING_ASSIGNMENT stroke:#000000
+	style PAYMENT stroke:#000000
+	style NOTIFICATION stroke:#000000
+
+```
