@@ -433,169 +433,169 @@ flowchart LR
 config:
   class:
     hideEmptyMembersBox: true
+  layout: elk
   theme: base
-  look: handDrawn
-  fontFamily: '''Merriweather Variable'', serif'
   themeVariables:
-    fontFamily: '''Merriweather Variable'', serif'
+    primaryColor: '#d1fae5'
+    primaryTextColor: '#000000'
+    primaryBorderColor: '#000000'
+    lineColor: '#000000'
+    secondaryColor: '#a7f3d0'
+    tertiaryColor: '#ecfdf5'
+    fontFamily: ''
+    fontSize: 16px
+    textColor: '#000000'
+    mainBkg: '#d1fae5'
+    nodeBorder: '#000000'
 ---
 classDiagram
-direction TB
+direction BT
     class Role {
-        STUDENT
-        ADMIN
-        ADVISOR
+	    STUDENT
+	    ADMIN
+	    ADVISOR
     }
 
     class ApplicationStatus {
-        PENDING
-        ACCEPTED
-        REJECTED
+	    PENDING
+	    ACCEPTED
+	    REJECTED
     }
 
     class PaymentStatus {
-        PENDING
-        PAID
-        FAILED
+	    PENDING
+	    PAID
+	    FAILED
     }
 
     class User {
-        +int id
-        +String fullName
-        +String email
-        -String passwordHash
-        +Role role
-        +String phone
-        +Date createdAt
-        +Date updatedAt
-        +login() : boolean
-        +updateProfile() : void
+	    +int id
+	    +String fullName
+	    +String email
+	    -String passwordHash
+	    +Role role
+	    +String phone
+	    +Date createdAt
+	    +Date updatedAt
+	    +login() : boolean
+	    +updateProfile() : void
     }
 
     class Student {
-        +String nationality
-        -String passportNumber
-        +Date dateOfBirth
-        +EnrollmentStatus status
-        +applyToProgram(Program) : Application
-        +enrollInCourse(Course) : Enrollment
-        +makePayment(amount) : Payment
+	    +String nationality
+	    -String passportNumber
+	    +Date dateOfBirth
+	    +EnrollmentStatus status
+	    +applyToProgram(Program) : Application
+	    +enrollInCourse(Course) : Enrollment
+	    +makePayment(amount) : Payment
     }
 
     class Advisor {
-        +String department
-        +String office
-        +reviewApplication(Application) : void
-        +assignHousing(Student, Housing) : HousingAssignment
+	    +String department
+	    +String office
+	    +reviewApplication(Application) : void
+	    +assignHousing(Student, Housing) : HousingAssignment
     }
 
     class University {
-        +int id
-        +String name
-        +String country
-        +String city
-        +String website
-        +getPrograms() : Program[]
+	    +int id
+	    +String name
+	    +String country
+	    +String city
+	    +String website
+	    +getPrograms() : Program[]
     }
 
     class Program {
-        +int id
-        +String name
-        +DegreeLevel degreeLevel
-        +int durationYears
-        +String language
-        +getAvailableCourses() : Course[]
+	    +int id
+	    +String name
+	    +DegreeLevel degreeLevel
+	    +int durationYears
+	    +String language
+	    +getAvailableCourses() : Course[]
     }
 
     class Course {
-        +int id
-        +String code
-        +String title
-        +int credits
-        +generateSyllabus() : Document
-    }
-
-    class Enrollment {
-        +int id
-        +String semester
-        +String grade
-        +updateGrade(String) : void
+	    +int id
+	    +String code
+	    +String title
+	    +int credits
+	    +generateSyllabus() : Document
     }
 
     class Application {
-        +int id
-        +ApplicationStatus status
-        +String intakeSemester
-        +Date submittedAt
-        +updateStatus(ApplicationStatus) : void
-        +attachDocument(Document) : void
+	    +int id
+	    +ApplicationStatus status
+	    +String intakeSemester
+	    +Date submittedAt
+	    +updateStatus(ApplicationStatus) : void
+	    +attachDocument(Document) : void
     }
 
     class Document {
-        +int id
-        +DocumentType type
-        +String fileUrl
-        +Date uploadedAt
-        +verifyAuthenticity() : boolean
+	    +int id
+	    +DocumentType type
+	    +String fileUrl
+	    +Date uploadedAt
+	    +verifyAuthenticity() : boolean
     }
 
     class Visa {
-        +int id
-        +String visaType
-        +Date issueDate
-        +Date expiryDate
-        +VisaStatus status
-        +checkValidity() : boolean
+	    +int id
+	    +String visaType
+	    +Date issueDate
+	    +Date expiryDate
+	    +VisaStatus status
+	    +checkValidity() : boolean
     }
 
     class Housing {
-        +int id
-        +String name
-        +String address
-        +Decimal monthlyRent
-        +int capacity
-        +checkAvailability() : boolean
+	    +int id
+	    +String name
+	    +String address
+	    +Decimal monthlyRent
+	    +int capacity
+	    +checkAvailability() : boolean
     }
 
     class HousingAssignment {
-        +int id
-        +Date startDate
-        +Date endDate
-        +terminateContract() : void
+	    +int id
+	    +Date startDate
+	    +Date endDate
+	    +terminateContract() : void
     }
 
     class Payment {
-        +int id
-        +Decimal amount
-        +PaymentPurpose purpose
-        +PaymentStatus status
-        +Date paidAt
-        +processTransaction() : boolean
-        +generateReceipt() : Document
+	    +int id
+	    +Decimal amount
+	    +PaymentPurpose purpose
+	    +PaymentStatus status
+	    +Date paidAt
+	    +processTransaction() : boolean
+	    +generateReceipt() : Document
     }
 
     class Notification {
-        +int id
-        +String message
-        +boolean isRead
-        +Date createdAt
-        +markAsRead() : void
+	    +int id
+	    +String message
+	    +boolean isRead
+	    +Date createdAt
+	    +markAsRead() : void
     }
 
-    <<enumeration>> Role
-    <<enumeration>> ApplicationStatus
-    <<enumeration>> PaymentStatus
-    <<Abstract>> User
+	<<enumeration>> Role
+	<<enumeration>> ApplicationStatus
+	<<enumeration>> PaymentStatus
+	<<Abstract>> User
 
     User <-- Student
     User <-- Advisor
-    University "1" -- "*" Program : offers
-    Program "1" --> "*" Course : includes
-    Student "1" --> "*" Enrollment : has
-    Course "1" --> "*" Enrollment : contains
-    Student "1" --> "*" Application : submits
-    Program "1" --> "*" Application : receives
-    Advisor "1" --> "*" Application : manages
+    University "1" --> "*" Program : offers
+    Program "1" -- "*" Course : includes
+    Student "1" -- "*" Application : submits
+    Program "1" -- "*" Application : receives
+    Advisor "1" -- "*" Application : manages
     Student "1" --> "*" Document : owns
     Application "1" --> "*" Document : requires
     Student "1" --> "1..*" Visa : holds
@@ -605,16 +605,11 @@ direction TB
     Student "1" -- "*" Payment : makes
     User "1" -- "*" Notification : receives
 
-    class Student:::Aqua
-    class University:::Sky
-    class Program:::Pine
-    class Course:::Aqua
-    class HousingAssignment:::Ash
-    class Payment:::Rose
+	class Role:::Ash
+	class ApplicationStatus:::Ash
+	class PaymentStatus:::Ash
+	class User:::Rose
 
-    classDef Aqua :,stroke-width:1px,stroke-dasharray:none,stroke:#46EDC8,fill:#DEFFF8,color:#378E7A,stroke-width:1px,stroke-dasharray:none,stroke:#46EDC8,fill:#DEFFF8,color:#378E7A
-    classDef Rose :,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236
-    classDef Sky :,stroke-width:1px,stroke-dasharray:none,stroke:#374D7C,fill:#E2EBFF,color:#374D7C
-    classDef Pine :,stroke-width:1px,stroke-dasharray:none,stroke:#254336,fill:#27654A,color:#FFFFFF
-    classDef Ash :,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000
+	classDef Rose :,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236
+	classDef Ash :,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000
 ```
