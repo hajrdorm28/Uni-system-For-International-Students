@@ -584,7 +584,7 @@ direction BT
     Housing "1" -- "*" HousingAssignment : booked_via
     Student "1" -- "*" Payment : makes
     User "1" -- "*" Notification : receives
-
+    Student "1" --> "1" Program : offers
 	class Role:::Ash
 	class ApplicationStatus:::Ash
 	class PaymentStatus:::Ash
