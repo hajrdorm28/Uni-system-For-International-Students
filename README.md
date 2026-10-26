@@ -449,147 +449,151 @@ config:
     nodeBorder: '#000000'
 ---
 classDiagram
-    direction TB
-
-    %% Enumerations
+direction LR
     class Role {
-        <<enumeration>>
-        STUDENT
-        ADMIN
-        ADVISOR
+	    STUDENT
+	    ADMIN
+	    ADVISOR
     }
 
     class ApplicationStatus {
-        <<enumeration>>
-        PENDING
-        ACCEPTED
-        REJECTED
+	    PENDING
+	    ACCEPTED
+	    REJECTED
     }
 
     class PaymentStatus {
-        <<enumeration>>
-        PENDING
-        PAID
-        FAILED
+	    PENDING
+	    PAID
+	    FAILED
     }
 
-    %% Abstract/Base Classes
     class User {
-        <<Abstract>>
-        +int id
-        +String fullName
-        +String email
-        -String passwordHash
-        +Role role
-        +String phone
-        +Date createdAt
-        +Date updatedAt
-        +login() : boolean
-        +updateProfile() : void
+	    +int id
+	    +String fullName
+	    +String email
+	    -String passwordHash
+	    +Role role
+	    +String phone
+	    +Date createdAt
+	    +Date updatedAt
+	    +login() : boolean
+	    +updateProfile() : void
     }
 
-    %% Core Classes
     class Student {
-        +String nationality
-        -String passportNumber
-        +Date dateOfBirth
-        +EnrollmentStatus status
-        +applyToProgram(Program) : Application
-        +enrollInCourse(Course) : Enrollment
-        +makePayment(amount) : Payment
+	    +String nationality
+	    -String passportNumber
+	    +Date dateOfBirth
+	    +EnrollmentStatus status
+	    +applyToProgram(Program) : Application
+	    +enrollInCourse(Course) : Enrollment
+	    +makePayment(amount) : Payment
     }
 
     class Advisor {
-        +String department
-        +String office
-        +reviewApplication(Application) : void
-        +assignHousing(Student, Housing) : HousingAssignment
+	    +String department
+	    +String office
+	    +reviewApplication(Application) : void
+	    +assignHousing(Student, Housing) : HousingAssignment
     }
 
     class Program {
-        +int id
-        +String name
-        +DegreeLevel degreeLevel
-        +int durationYears
-        +String language
-        +getAvailableCourses() : Course[]
+	    +int id
+	    +String name
+	    +DegreeLevel degreeLevel
+	    +int durationYears
+	    +String language
+	    +getAvailableCourses() : Course[]
     }
 
     class Course {
-        +int id
-        +String code
-        +String title
-        +int credits
-        +generateSyllabus() : Document
+	    +int id
+	    +String code
+	    +String title
+	    +int credits
+	    +generateSyllabus() : Document
     }
 
     class Application {
-        +int id
-        +ApplicationStatus status
-        +String intakeSemester
-        +Date submittedAt
-        +updateStatus(ApplicationStatus) : void
-        +attachDocument(Document) : void
+	    +int id
+	    +ApplicationStatus status
+	    +String intakeSemester
+	    +Date submittedAt
+	    +updateStatus(ApplicationStatus) : void
+	    +attachDocument(Document) : void
     }
 
     class Document {
-        +int id
-        +DocumentType type
-        +String fileUrl
-        +Date uploadedAt
-        +verifyAuthenticity() : boolean
+	    +int id
+	    +DocumentType type
+	    +String fileUrl
+	    +Date uploadedAt
+	    +verifyAuthenticity() : boolean
     }
 
     class Payment {
-        +int id
-        +Decimal amount
-        +PaymentPurpose purpose
-        +PaymentStatus status
-        +Date paidAt
-        +processTransaction() : boolean
-        +generateReceipt() : Document
+	    +int id
+	    +Decimal amount
+	    +PaymentPurpose purpose
+	    +PaymentStatus status
+	    +Date paidAt
+	    +processTransaction() : boolean
+	    +generateReceipt() : Document
     }
 
     class Notification {
-        +int id
-        +String message
-        +boolean isRead
-        +Date createdAt
-        +markAsRead() : void
+	    +int id
+	    +String message
+	    +boolean isRead
+	    +Date createdAt
+	    +markAsRead() : void
     }
-    
-    class University
-    class Housing
-    class HousingAssignment
 
-    %% Relationships
+    class University {
+    }
+
+    class Housing {
+    }
+
+    class HousingAssignment {
+    }
+
+    class PaymentStatusAsh {
+    }
+
+    class UserRose {
+    }
+
+	<<enumeration>> Role
+	<<enumeration>> ApplicationStatus
+	<<enumeration>> PaymentStatus
+	<<Abstract>> User
+
     User <|-- Student
     User <|-- Advisor
-    
+    User "1" -- "*" Notification : receives
     University "1" --> "*" Program : offers
     University "1" --|> "*" Housing : provides
-    
     Program "1" -- "*" Course : includes
     Program "1" -- "*" Application : receives
-    
+    Student "1" --> "1" Program : enrolls
     Student "1" -- "*" Application : submits
     Student "1" --> "*" Document : owns
     Student "1" -- "*" HousingAssignment : receives
     Student "1" -- "*" Payment : makes
-    Student "1" --> "1" Program : enrolls
-    
     Advisor "1" -- "*" Application : manages
-    
     Application "1" --> "*" Document : requires
     Housing "1" -- "*" HousingAssignment : booked_via
-    User "1" -- "*" Notification : receives
 
-    %% Styling and ClassDefs
-    classDef Rose stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236
-    classDef Ash stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000
+	class Role:::Ash
+	class ApplicationStatus:::Ash
+	class PaymentStatus:::Ash
+	class User:::Sky
 
-    class Role,ApplicationStatus,PaymentStatus Ash
-    class User Rose
+	classDef Rose :,stroke:#FF5978,fill:#FFDFE5,color:#8E2236
+	classDef Ash :,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-  width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000
+	classDef Sky :,stroke-width:1px,stroke-dasharray:none,stroke:#374D7C,fill:#E2EBFF,color:#374D7C
 ```
 
 ## 4. ERD 
