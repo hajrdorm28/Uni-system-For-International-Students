@@ -534,18 +534,6 @@ direction BT
 	    +verifyAuthenticity() : boolean
     }
 
-    class Visa {
-	    +int id
-	    +String visaType
-	    +Date issueDate
-	    +Date expiryDate
-	    +VisaStatus status
-	    +checkValidity() : boolean
-    }
-
-
-
-
     class Payment {
 	    +int id
 	    +Decimal amount
@@ -578,7 +566,6 @@ direction BT
     Advisor "1" -- "*" Application : manages
     Student "1" --> "*" Document : owns
     Application "1" --> "*" Document : requires
-    Student "1" --> "1..*" Visa : holds
     University "1" --|> "*" Housing : provides
     Student "1" -- "*" HousingAssignment : receives
     Housing "1" -- "*" HousingAssignment : booked_via
@@ -638,13 +625,7 @@ erDiagram
 		string office  ""  
 	}
 
-	UNIVERSITY {
-		int id PK ""  
-		string name  ""  
-		string country  ""  
-		string city  ""  
-		string website  ""  
-	}
+
 
 	PROGRAM {
 		int id PK ""  
@@ -682,31 +663,10 @@ erDiagram
 		int application_id FK "Nullable"  
 	}
 
-	VISA {
-		int id PK ""  
-		string visaType  ""  
-		date issueDate  ""  
-		date expiryDate  ""  
-		string status  ""  
-		int student_id FK ""  
-	}
+	
 
-	HOUSING {
-		int id PK ""  
-		string name  ""  
-		string address  ""  
-		decimal monthlyRent  ""  
-		int capacity  ""  
-		int university_id FK ""  
-	}
 
-	HOUSING_ASSIGNMENT {
-		int id PK ""  
-		date startDate  ""  
-		date endDate  ""  
-		int student_id FK ""  
-		int housing_id FK ""  
-	}
+
 
 	PAYMENT {
 		int id PK ""  
@@ -735,9 +695,6 @@ erDiagram
 	STUDENT||--o{DOCUMENT:"owns"
 	APPLICATION||--o{DOCUMENT:"requires"
 	STUDENT||--|{VISA:"holds"
-	UNIVERSITY||--o{HOUSING:"provides"
-	STUDENT||--o{HOUSING_ASSIGNMENT:"receives"
-	HOUSING||--o{HOUSING_ASSIGNMENT:"booked_via"
 	STUDENT||--o{PAYMENT:"makes"
 	USER||--o{NOTIFICATION:"receives"
 
