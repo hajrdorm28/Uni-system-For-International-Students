@@ -498,14 +498,7 @@ direction BT
 	    +assignHousing(Student, Housing) : HousingAssignment
     }
 
-    class University {
-	    +int id
-	    +String name
-	    +String country
-	    +String city
-	    +String website
-	    +getPrograms() : Program[]
-    }
+
 
     class Program {
 	    +int id
@@ -550,21 +543,8 @@ direction BT
 	    +checkValidity() : boolean
     }
 
-    class Housing {
-	    +int id
-	    +String name
-	    +String address
-	    +Decimal monthlyRent
-	    +int capacity
-	    +checkAvailability() : boolean
-    }
 
-    class HousingAssignment {
-	    +int id
-	    +Date startDate
-	    +Date endDate
-	    +terminateContract() : void
-    }
+
 
     class Payment {
 	    +int id
