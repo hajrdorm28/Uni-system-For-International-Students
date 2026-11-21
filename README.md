@@ -433,7 +433,6 @@ flowchart LR
 config:
   class:
     hideEmptyMembersBox: true
-  layout: elk
   theme: base
   themeVariables:
     primaryColor: '#d1fae5'
@@ -442,158 +441,479 @@ config:
     lineColor: '#000000'
     secondaryColor: '#a7f3d0'
     tertiaryColor: '#ecfdf5'
-    fontFamily: ''
     fontSize: 16px
     textColor: '#000000'
     mainBkg: '#d1fae5'
     nodeBorder: '#000000'
 ---
 classDiagram
-direction LR
-    class Role {
-	    STUDENT
-	    ADMIN
-	    ADVISOR
-    }
+direction TB
 
-    class ApplicationStatus {
-	    PENDING
-	    ACCEPTED
-	    REJECTED
-    }
+%% ============================================================
+%% International Students University System (module of the college site)
+%% LEGEND:  green  = core module classes
+%%          blue   = external (owned by the main college website / email provider)
+%%          purple = service class (business logic, not stored)
+%%          amber  = OPTIONAL features (nothing in the core depends on them)
+%%          grey   = enumerations
+%% ============================================================
 
-    class PaymentStatus {
-	    PENDING
-	    PAID
-	    FAILED
-    }
+%% ---------------- ENUMERATIONS ----------------
+class Role:::enumStyle {
+    <<enumeration>>
+    STUDENT
+    STUDENT_AFFAIRS
+    ADMIN
+}
+class StudentStatus:::enumStyle {
+    <<enumeration>>
+    ACTIVE
+    SUSPENDED
+    GRADUATED
+    WITHDRAWN
+}
+class RequestStatus:::enumStyle {
+    <<enumeration>>
+    NOT_STARTED
+    PENDING_REVIEW
+    COMPLETED
+    REJECTED
+}
+class ReviewDecision:::enumStyle {
+    <<enumeration>>
+    APPROVED
+    REJECTED
+}
+class GenerationTrigger:::enumStyle {
+    <<enumeration>>
+    STUDENT_PRINT
+    STAFF_SINGLE
+    STAFF_BULK
+}
+class PaymentStatus:::enumStyle {
+    <<enumeration>>
+    PAID
+    VOIDED
+}
+class MeetingStatus:::enumStyle {
+    <<enumeration>>
+    SCHEDULED
+    CANCELLED
+    COMPLETED
+}
+class NotificationType:::enumStyle {
+    <<enumeration>>
+    MEETING_SCHEDULED
+    FEE_ADDED
+    DOCUMENT_APPROVED
+    DOCUMENT_REJECTED
+    REMINDER
+}
+class EmailStatus:::enumStyle {
+    <<enumeration>>
+    QUEUED
+    SENT
+    FAILED
+}
+class JobStatus:::enumStyle {
+    <<enumeration>>
+    QUEUED
+    RUNNING
+    DONE
+    FAILED
+}
+class ReminderType:::enumStyle {
+    <<enumeration>>
+    SERVICE_DEADLINE
+    UNPAID_FEE
+    RESIDENCY_EXPIRY
+    PASSPORT_EXPIRY
+}
+class AppointmentStatus:::enumStyle {
+    <<enumeration>>
+    BOOKED
+    ATTENDED
+    CANCELLED
+    NO_SHOW
+}
 
-    class User {
-	    +int id
-	    +String fullName
-	    +String email
-	    -String passwordHash
-	    +Role role
-	    +String phone
-	    +Date createdAt
-	    +Date updatedAt
-	    +login() : boolean
-	    +updateProfile() : void
-    }
+%% ---------------- EXTERNAL (main college website) ----------------
+class CollegeUser:::external {
+    <<external>>
+    +int id
+    +String fullName
+    +String email
+    -String passwordHash
+    +Role role
+    +String phone
+    +boolean isActive
+    +Date createdAt
+    +Date updatedAt
+    +login() boolean
+    +logout() void
+    +requestPasswordReset() PasswordResetToken
+}
+class CollegeFaculty:::external {
+    <<external>>
+    +int id
+    +String name
+}
+class CollegeProgram:::external {
+    <<external>>
+    +int id
+    +String name
+}
+class EmailService:::external {
+    <<external>>
+    +send(String to, String subject, String body) boolean
+}
 
-    class Student {
-	    +String nationality
-	    -String passportNumber
-	    +Date dateOfBirth
-	    +EnrollmentStatus status
-	    +applyToProgram(Program) : Application
-	    +enrollInCourse(Course) : Enrollment
-	    +makePayment(amount) : Payment
-    }
+%% ---------------- CORE: PEOPLE ----------------
+class InternationalStudent {
+    +String studentCode
+    +String fullNameAr
+    +String nationality
+    +String gender
+    -String passportNumber
+    +Date passportExpiry
+    +Date dateOfBirth
+    +Date residencyExpiry
+    +StudentStatus status
+    +viewAvailableServices() List~Service~
+    +viewServiceDetails(Service service) ServiceRequest
+    +printPaper(ServiceRequest request) GeneratedDocument
+    +uploadSignedPaper(ServiceRequest request, File file) UploadedDocument
+    +viewServiceStatus() List~ServiceRequest~
+}
+class StaffMember {
+    +String department
+    +String jobTitle
+    +registerStudent(InternationalStudent data) InternationalStudent
+    +updateStudent(InternationalStudent student) void
+    +searchStudents(String keyword, RequestStatus status) List~InternationalStudent~
+    +generateDocument(InternationalStudent student, Service service) GeneratedDocument
+    +addAdditionalFee(InternationalStudent student, String title, Decimal amount) AdditionalFee
+    +reviewDocument(UploadedDocument doc, ReviewDecision decision, String reason) DocumentReview
+    +scheduleMeeting(InternationalStudent student, DateTime startsAt, String purpose) Meeting
+    +generateFeesReport(AcademicYear year) File
+}
+class PasswordResetToken {
+    +int id
+    -String tokenHash
+    +DateTime createdAt
+    +DateTime expiresAt
+    +DateTime usedAt
+    +isValid() boolean
+    +markUsed() void
+}
 
-    class Advisor {
-	    +String department
-	    +String office
-	    +reviewApplication(Application) : void
-	    +assignHousing(Student, Housing) : HousingAssignment
-    }
+%% ---------------- CORE: SERVICES, FEES, TEMPLATES ----------------
+class AcademicYear {
+    +int id
+    +String label
+    +Date startDate
+    +Date endDate
+    +boolean isCurrent
+    +contains(Date date) boolean
+}
+class Service {
+    +int id
+    +String code
+    +String name
+    +String nameAr
+    +String description
+    +boolean requiresPayment
+    +boolean requiresUpload
+    +int displayOrder
+    +boolean isActive
+    +getActiveTemplate(String language) DocumentTemplate
+    +getFee(AcademicYear year, CollegeProgram program) FeeSchedule
+}
+class FeeSchedule {
+    +int id
+    +Decimal amount
+    +String currency
+    +appliesTo(InternationalStudent student) boolean
+}
+class DocumentTemplate {
+    +int id
+    +String name
+    +String language
+    +int version
+    +String bodyHtml
+    +boolean isActive
+    +DateTime createdAt
+    +validate() boolean
+    +render(InternationalStudent student, ServiceRequest request) String
+}
+class TemplatePlaceholder {
+    +int id
+    +String placeholderKey
+    +String label
+    +String sourcePath
+    +boolean isRequired
+    +String defaultValue
+    +resolve(InternationalStudent student, ServiceRequest request) String
+}
 
-    class Program {
-	    +int id
-	    +String name
-	    +DegreeLevel degreeLevel
-	    +int durationYears
-	    +String language
-	    +getAvailableCourses() : Course[]
-    }
+%% ---------------- CORE: REQUESTS, DOCUMENTS, PAYMENTS ----------------
+class ServiceRequest {
+    +int id
+    +RequestStatus status
+    +Decimal amountDue
+    +String currency
+    +DateTime createdAt
+    +DateTime updatedAt
+    +DateTime completedAt
+    +attachUpload(UploadedDocument doc) void
+    +approve() void
+    +reject(String reason) void
+}
+class AdditionalFee {
+    +int id
+    +String title
+    +String description
+    +Decimal amount
+    +Date dueDate
+    +DateTime createdAt
+}
+class GeneratedDocument {
+    +int id
+    +String referenceNumber
+    +String verificationCode
+    +String filePath
+    +String dataSnapshot
+    +GenerationTrigger triggerType
+    +DateTime generatedAt
+    +toPdf() File
+    +verify(String code) boolean
+}
+class UploadedDocument {
+    +int id
+    +String fileName
+    +String filePath
+    +String mimeType
+    +int sizeBytes
+    +int attemptNumber
+    +DateTime uploadedAt
+    +isAllowedType() boolean
+}
+class DocumentReview {
+    +int id
+    +ReviewDecision decision
+    +String reason
+    +DateTime reviewedAt
+}
+class Payment {
+    +int id
+    +Decimal amount
+    +String currency
+    +String method
+    +String receiptNumber
+    +PaymentStatus status
+    +DateTime paidAt
+    +voidPayment() void
+}
 
-    class Course {
-	    +int id
-	    +String code
-	    +String title
-	    +int credits
-	    +generateSyllabus() : Document
-    }
+%% ---------------- CORE: MEETINGS & NOTIFICATIONS ----------------
+class Meeting {
+    +int id
+    +DateTime startsAt
+    +int durationMinutes
+    +String location
+    +String purpose
+    +MeetingStatus status
+    +DateTime createdAt
+    +cancel() void
+}
+class Notification {
+    +int id
+    +NotificationType type
+    +String title
+    +String message
+    +boolean isRead
+    +DateTime createdAt
+    +EmailStatus emailStatus
+    +int emailAttempts
+    +DateTime emailSentAt
+    +String lastError
+    +markAsRead() void
+    +sendEmail() boolean
+}
 
-    class Application {
-	    +int id
-	    +ApplicationStatus status
-	    +String intakeSemester
-	    +Date submittedAt
-	    +updateStatus(ApplicationStatus) : void
-	    +attachDocument(Document) : void
-    }
+%% ---------------- CORE: AUTO-FILL ENGINE ----------------
+class DocumentGenerator:::serviceClass {
+    <<service>>
+    +generate(InternationalStudent student, Service service, GenerationTrigger trigger) GeneratedDocument
+    +fillTemplate(DocumentTemplate template, InternationalStudent student, ServiceRequest request) String
+    +generateReference() String
+    +renderPdf(String html) File
+}
 
-    class Document {
-	    +int id
-	    +DocumentType type
-	    +String fileUrl
-	    +Date uploadedAt
-	    +verifyAuthenticity() : boolean
-    }
+%% ---------------- OPTIONAL FEATURES ----------------
+class StudentImportBatch:::optional {
+    <<optional>>
+    +int id
+    +String fileName
+    +int totalRows
+    +int importedRows
+    +int failedRows
+    +JobStatus status
+    +String errorReportPath
+    +DateTime createdAt
+    +run() void
+}
+class BulkGenerationJob:::optional {
+    <<optional>>
+    +int id
+    +int totalCount
+    +int completedCount
+    +int failedCount
+    +JobStatus status
+    +String resultArchivePath
+    +DateTime createdAt
+    +DateTime finishedAt
+    +run() void
+}
+class BulkGenerationItem:::optional {
+    <<optional>>
+    +int id
+    +JobStatus status
+    +String errorMessage
+}
+class ServiceDeadline:::optional {
+    <<optional>>
+    +int id
+    +Date dueDate
+    +int reminderDaysBefore
+}
+class Reminder:::optional {
+    <<optional>>
+    +int id
+    +ReminderType type
+    +DateTime remindAt
+    +DateTime sentAt
+    +send() void
+}
+class MedicalSlot:::optional {
+    <<optional>>
+    +int id
+    +DateTime startsAt
+    +int durationMinutes
+    +int capacity
+    +String location
+    +boolean isOpen
+    +hasFreeCapacity() boolean
+}
+class MedicalAppointment:::optional {
+    <<optional>>
+    +int id
+    +AppointmentStatus status
+    +DateTime bookedAt
+    +cancel() void
+}
+class Announcement:::optional {
+    <<optional>>
+    +int id
+    +String title
+    +String body
+    +String language
+    +DateTime publishedAt
+    +DateTime expiresAt
+}
+class FaqItem:::optional {
+    <<optional>>
+    +int id
+    +String question
+    +String answer
+    +String language
+    +int displayOrder
+    +boolean isPublished
+}
+class AuditLog:::optional {
+    <<optional>>
+    +int id
+    +String action
+    +String entityType
+    +int entityId
+    +String details
+    +String ipAddress
+    +DateTime createdAt
+}
 
-    class Payment {
-	    +int id
-	    +Decimal amount
-	    +PaymentPurpose purpose
-	    +PaymentStatus status
-	    +Date paidAt
-	    +processTransaction() : boolean
-	    +generateReceipt() : Document
-    }
+%% ============================================================
+%% RELATIONSHIPS - CORE
+%% ============================================================
+CollegeUser <|-- InternationalStudent
+CollegeUser <|-- StaffMember
+CollegeUser "1" --> "*" PasswordResetToken : requests
+CollegeUser "1" --> "*" Notification : receives
+CollegeUser "1" --> "*" GeneratedDocument : generates
+CollegeFaculty "1" --> "*" CollegeProgram : offers
+CollegeProgram "1" --> "*" InternationalStudent : enrolls
+CollegeProgram "0..1" --> "*" FeeSchedule : specific to
 
-    class Notification {
-	    +int id
-	    +String message
-	    +boolean isRead
-	    +Date createdAt
-	    +markAsRead() : void
-    }
+InternationalStudent "1" --> "*" ServiceRequest : requests
+InternationalStudent "1" --> "*" Meeting : attends
+StaffMember "1" --> "*" Meeting : schedules
+StaffMember "1" --> "*" AdditionalFee : adds
+StaffMember "1" --> "*" DocumentReview : performs
+StaffMember "1" --> "*" Payment : confirms
+StaffMember "1" --> "*" DocumentTemplate : authors
 
-    class University {
-    }
+Service "1" --> "*" ServiceRequest : fulfilled by
+Service "1" --> "*" FeeSchedule : priced by
+Service "1" --> "*" DocumentTemplate : has templates
+AcademicYear "1" --> "*" ServiceRequest : in
+AcademicYear "1" --> "*" FeeSchedule : valid for
 
-    class Housing {
-    }
+DocumentTemplate "1" *-- "*" TemplatePlaceholder : defines
+DocumentTemplate "1" --> "*" GeneratedDocument : used for
 
-    class HousingAssignment {
-    }
+ServiceRequest "1" --> "*" GeneratedDocument : produces
+ServiceRequest "1" --> "*" UploadedDocument : has uploads
+ServiceRequest "1" --> "0..1" Payment : settled by
+ServiceRequest "1" --> "0..1" AdditionalFee : detailed by
+ServiceRequest "0..1" --> "*" Notification : is about
+UploadedDocument "1" --> "0..1" DocumentReview : reviewed in
+Meeting "0..1" --> "*" Notification : is about
 
-    class PaymentStatusAsh {
-    }
+DocumentGenerator ..> DocumentTemplate : fills
+DocumentGenerator ..> InternationalStudent : reads data of
+DocumentGenerator ..> FeeSchedule : looks up fee
+DocumentGenerator ..> GeneratedDocument : creates
+InternationalStudent ..> DocumentGenerator : prints via
+StaffMember ..> DocumentGenerator : generates via
+Notification ..> EmailService : delivered by
 
-    class UserRose {
-    }
+%% ============================================================
+%% RELATIONSHIPS - OPTIONAL (all arrows start at the optional class)
+%% ============================================================
+StaffMember "1" --> "*" StudentImportBatch : uploads
+StaffMember "1" --> "*" BulkGenerationJob : starts
+StaffMember "1" --> "*" Announcement : publishes
+StaffMember "1" --> "*" FaqItem : maintains
+CollegeUser "0..1" --> "*" AuditLog : performs
+Service "1" --> "*" BulkGenerationJob : for service
+BulkGenerationJob "1" *-- "*" BulkGenerationItem : contains
+InternationalStudent "1" --> "*" BulkGenerationItem : included in
+GeneratedDocument "0..1" --> "0..1" BulkGenerationItem : output of
+Service "1" --> "*" ServiceDeadline : has deadline
+AcademicYear "1" --> "*" ServiceDeadline : applies in
+InternationalStudent "1" --> "*" Reminder : gets
+ServiceRequest "0..1" --> "*" Reminder : concerns
+Notification "0..1" --> "0..1" Reminder : sent as
+MedicalSlot "1" --> "*" MedicalAppointment : books
+InternationalStudent "1" --> "*" MedicalAppointment : books
+ServiceRequest "1" --> "*" MedicalAppointment : for exam
 
-	<<enumeration>> Role
-	<<enumeration>> ApplicationStatus
-	<<enumeration>> PaymentStatus
-	<<Abstract>> User
-
-    User <|-- Student
-    User <|-- Advisor
-    User "1" -- "*" Notification : receives
-    University "1" --> "*" Program : offers
-    University "1" --|> "*" Housing : provides
-    Program "1" -- "*" Course : includes
-    Program "1" -- "*" Application : receives
-    Student "1" --> "1" Program : enrolls
-    Student "1" -- "*" Application : submits
-    Student "1" --> "*" Document : owns
-    Student "1" -- "*" HousingAssignment : receives
-    Student "1" -- "*" Payment : makes
-    Advisor "1" -- "*" Application : manages
-    Application "1" --> "*" Document : requires
-    Housing "1" -- "*" HousingAssignment : booked_via
-
-	class Role:::Ash
-	class ApplicationStatus:::Ash
-	class PaymentStatus:::Ash
-	class User:::Sky
-
-	classDef Rose :,stroke:#FF5978,fill:#FFDFE5,color:#8E2236
-	classDef Ash :,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-  width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000
-	classDef Sky :,stroke-width:1px,stroke-dasharray:none,stroke:#374D7C,fill:#E2EBFF,color:#374D7C
+%% ============================================================
+%% STYLES
+%% ============================================================
+classDef external fill:#e2ebff,stroke:#374d7c,color:#374d7c,stroke-width:1px
+classDef serviceClass fill:#ede9fe,stroke:#6d28d9,color:#3b0764,stroke-width:1px
+classDef optional fill:#fef3c7,stroke:#b45309,color:#451a03,stroke-width:1px
+classDef enumStyle fill:#eeeeee,stroke:#999999,color:#000000,stroke-width:1px
 ```
 
 ## 4. ERD 
