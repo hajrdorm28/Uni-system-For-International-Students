@@ -716,3 +716,6 @@ erDiagram
     
 
 ```
+## 4. EER 
+<img width="730" height="903" alt="uni_international" src="https://github.com/user-attachments/assets/7b374aaf-7562-41da-9a50-99d84d2348e2" />
+
