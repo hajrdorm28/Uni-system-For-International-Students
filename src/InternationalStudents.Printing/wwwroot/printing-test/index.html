@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Printing module - backend test console</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Paper printing</h1>
+    <p>Test console for the international students printing module. The frontend team can replace this page: it only calls
+      <code>GET /api/templates</code>, <code>GET /api/students</code> and <code>GET /print/{studentId}/{templateCode}</code>.</p>
+  </header>
+
+  <main class="layout">
+    <div class="controls">
+      <section aria-labelledby="h-key">
+        <h2 id="h-key">1. Admin key</h2>
+        <label for="apiKey">Key sent as the <code>X-Admin-Key</code> header</label>
+        <input id="apiKey" type="password" autocomplete="off" spellcheck="false">
+        <label for="staffId">Staff user id (<code>user.id</code> of an ADMIN or ADVISOR), sent as <code>X-Admin-User-Id</code></label>
+        <div class="row">
+          <input id="staffId" type="number" min="1" step="1" inputmode="numeric">
+          <button id="saveKey" type="button">Use key</button>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-student">
+        <h2 id="h-student">2. Student</h2>
+        <label for="search">Search by name or student number</label>
+        <div class="row">
+          <input id="search" type="search" maxlength="100" autocomplete="off">
+          <button id="searchBtn" type="button">Search</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th scope="col"><span class="sr-only">Select</span></th><th scope="col">No.</th><th scope="col">Name</th><th scope="col">Nationality</th><th scope="col">Status</th></tr>
+            </thead>
+            <tbody id="studentRows"></tbody>
+          </table>
+        </div>
+        <p id="listHint" class="hint">Enter the admin key, then search.</p>
+      </section>
+
+      <section aria-labelledby="h-paper">
+        <h2 id="h-paper">3. Paper</h2>
+        <label for="template">Template</label>
+        <select id="template" disabled></select>
+        <p id="selectedLabel" class="hint">No student selected.</p>
+        <div class="row">
+          <button id="generate" type="button" disabled>Generate paper</button>
+          <button id="print" type="button" disabled>Print</button>
+          <button id="openTab" type="button" disabled>Open in new tab</button>
+        </div>
+      </section>
+
+      <p id="status" role="status" aria-live="polite"></p>
+    </div>
+
+    <section class="preview" aria-labelledby="h-preview">
+      <h2 id="h-preview">Preview</h2>
+      <iframe id="preview" title="Paper preview" sandbox="allow-modals allow-same-origin"></iframe>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

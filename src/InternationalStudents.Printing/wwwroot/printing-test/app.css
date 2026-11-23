@@ -1,0 +1,40 @@
+:root { --ink: #1b1f23; --muted: #566270; --rule: #c4ccd3; --accent: #1f3a5f; --bg: #f5f6f8; --error: #a4262c; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif; }
+code { font-size: 0.9em; }
+
+.top { padding: 1rem 1.5rem; border-bottom: 1px solid var(--rule); background: #fff; }
+.top h1 { margin: 0 0 0.25rem; font-size: 1.3rem; }
+.top p { margin: 0; max-width: 70ch; color: var(--muted); }
+
+.layout { display: grid; grid-template-columns: minmax(320px, 440px) 1fr; gap: 1.5rem; padding: 1.5rem; }
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+section { margin-bottom: 1.5rem; }
+h2 { margin: 0 0 0.5rem; font-size: 1.05rem; color: var(--accent); }
+label { display: block; margin-bottom: 0.25rem; color: var(--muted); }
+
+.row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+input[type="password"], input[type="search"], input[type="number"], select { flex: 1; min-width: 0; width: 100%; padding: 0.5rem 0.6rem; border: 1px solid var(--rule); border-radius: 4px; background: #fff; font: inherit; }
+.row input { width: auto; }
+input[type="password"] { margin-bottom: 0.75rem; }
+button { padding: 0.5rem 0.9rem; border: 1px solid var(--accent); border-radius: 4px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
+button:disabled { border-color: var(--rule); background: #e3e7ea; color: #8a949d; cursor: not-allowed; }
+button.secondary { background: #fff; color: var(--accent); }
+:focus-visible { outline: 3px solid #f2b705; outline-offset: 2px; }
+
+.table-wrap { max-height: 16rem; margin-top: 0.75rem; overflow: auto; border: 1px solid var(--rule); background: #fff; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--rule); text-align: left; }
+thead th { position: sticky; top: 0; background: #eef1f4; }
+tbody tr:hover { background: #f5f8fb; }
+tbody tr.selected { background: #e3edf8; }
+
+.hint { margin: 0.5rem 0; color: var(--muted); }
+#status { min-height: 1.5rem; margin: 0; }
+#status.error { color: var(--error); font-weight: 600; }
+
+.preview h2 { margin-bottom: 0.5rem; }
+iframe { width: 100%; height: 80vh; min-height: 520px; border: 1px solid var(--rule); background: #fff; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

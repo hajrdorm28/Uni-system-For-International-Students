@@ -1,0 +1,211 @@
+/*
+ * Printing (staff) - the only part of this portal that talks to a REAL backend so far.
+ *   GET /api/templates                       active print templates
+ *   GET /api/students?search=&limit=         student picker (from the database)
+ *   GET /print/{studentId}/{templateCode}    ready-to-print HTML page; the server logs every print
+ * Everything else still uses the localStorage mock in api.js.
+ *
+ * This file is self-contained: it adds its own strings to I18N and its own state, and
+ * app.js only calls PrintingViews.page() / PrintingViews.mount().
+ *
+ * TEMPORARY: the server currently protects these endpoints with a shared key plus the id of a staff
+ * user (X-Admin-Key, X-Admin-User-Id). When the portal's sign-in moves to the backend, delete the two
+ * access fields below and let the server read the signed-in user from the session.
+ */
+Object.assign(I18N.en, {
+  printPapers: 'Print papers',
+  prIntro: 'Papers are built by the server from the templates in the database, and every print is logged.',
+  prAccess: 'Printing access',
+  prAccessNote: 'Temporary: until portal sign-in uses the real backend, enter the printing key and your staff user id from the database.',
+  prKey: 'Printing key', prStaffId: 'Your staff user id', prConnect: 'Connect',
+  prStudent: 'Student', prSearch: 'Search by name or student number', prSearchBtn: 'Search', prStatus: 'Status',
+  prNoMatch: 'No students match.', prCount: '{n} student(s) shown.',
+  prPaper: 'Paper', prTemplate: 'Template', prSelected: 'Selected student', prNoSelection: 'No student selected.',
+  prGenerate: 'Generate paper', prPrint: 'Print', prPreview: 'Preview', prLoading: 'Loading…',
+  prReady: 'Paper ready and logged. Use Print.',
+  prKeyNeeded: 'Enter the printing key first.',
+  prNoServer: 'Cannot reach the printing server. Open the portal through the .NET app (http://localhost:5080).',
+  prFailed: 'Request failed'
+});
+Object.assign(I18N.ar, {
+  printPapers: 'طباعة الأوراق',
+  prIntro: 'يقوم الخادم بإنشاء الأوراق من القوالب الموجودة في قاعدة البيانات، ويتم تسجيل كل عملية طباعة.',
+  prAccess: 'صلاحية الطباعة',
+  prAccessNote: 'مؤقتاً: إلى أن يعمل تسجيل الدخول في البوابة مع الخادم الحقيقي، أدخل مفتاح الطباعة ورقم المستخدم الخاص بك في قاعدة البيانات.',
+  prKey: 'مفتاح الطباعة', prStaffId: 'رقم المستخدم الخاص بك', prConnect: 'اتصال',
+  prStudent: 'الطالب', prSearch: 'ابحث بالاسم أو برقم الطالب', prSearchBtn: 'بحث', prStatus: 'الحالة',
+  prNoMatch: 'لا يوجد طلاب مطابقون.', prCount: 'عدد الطلاب المعروضين: {n}',
+  prPaper: 'الورقة', prTemplate: 'القالب', prSelected: 'الطالب المحدد', prNoSelection: 'لم يتم اختيار طالب.',
+  prGenerate: 'إنشاء الورقة', prPrint: 'طباعة', prPreview: 'معاينة', prLoading: 'جار التحميل…',
+  prReady: 'الورقة جاهزة وتم تسجيلها. استخدم زر الطباعة.',
+  prKeyNeeded: 'أدخل مفتاح الطباعة أولاً.',
+  prNoServer: 'تعذر الاتصال بخادم الطباعة. افتح البوابة من خلال تطبيق .NET (http://localhost:5080).',
+  prFailed: 'فشل الطلب'
+});
+
+/* ---------- real API client ---------- */
+const PrintAPI = {
+  _get(name) { try { return sessionStorage.getItem(name) || ''; } catch (e) { return ''; } },
+  _set(name, v) { try { sessionStorage.setItem(name, v); } catch (e) { /* storage unavailable: value lives in the input only */ } },
+  get key() { return this._get('uisys_print_key'); },
+  get staffId() { return this._get('uisys_print_staff'); },
+  saveAccess(key, staffId) { this._set('uisys_print_key', key); this._set('uisys_print_staff', staffId); },
+
+  async call(path) {
+    const headers = { 'X-Admin-Key': this.key };
+    if (this.staffId) headers['X-Admin-User-Id'] = this.staffId;
+    let res;
+    try { res = await fetch(path, { headers }); } catch (e) { throw new Error(t('prNoServer')); }
+    if (!res.ok) {
+      let msg = `${t('prFailed')} (${res.status}).`;
+      try { const p = await res.json(); msg = p.detail || p.title || msg; } catch (e) { /* body was not JSON */ }
+      throw new Error(msg);
+    }
+    return res;
+  },
+  async templates() { return (await this.call('/api/templates')).json(); },
+  async students(q) { return (await this.call('/api/students?limit=50&search=' + encodeURIComponent(q || ''))).json(); },
+  async paper(studentId, code) { return (await this.call(`/print/${encodeURIComponent(studentId)}/${encodeURIComponent(code)}`)).text(); }
+};
+
+/* ---------- staff page ---------- */
+const PrintingViews = {
+  // kept at module level so the page survives App.render() (language switch)
+  st: { students: null, templates: null, selected: null, code: '', html: '', q: '', msg: '', err: false },
+
+  page() {
+    const s = this.st;
+    return `<h1>🖨️ ${t('printPapers')}</h1>
+      <p>${t('prIntro')}</p>
+      <section class="panel"><h2>${t('prAccess')}</h2>
+        <p class="pr-hint">${t('prAccessNote')}</p>
+        <div class="pr-grid">
+          <label>${t('prKey')}<input id="prKey" type="password" autocomplete="off" spellcheck="false" value="${esc(PrintAPI.key)}"></label>
+          <label>${t('prStaffId')}<input id="prStaff" type="number" min="1" step="1" inputmode="numeric" value="${esc(PrintAPI.staffId)}"></label>
+        </div>
+        <div class="row"><button class="btn primary" id="prConnect" type="button">${t('prConnect')}</button></div>
+      </section>
+      <section class="panel"><h2>${t('prStudent')}</h2>
+        <div class="row"><input id="prSearch" class="pr-grow" type="search" maxlength="100" placeholder="${esc(t('prSearch'))}" value="${esc(s.q)}">
+          <button class="btn" id="prSearchBtn" type="button">${t('prSearchBtn')}</button></div>
+        <div id="prStudents"></div><p id="prCount" class="pr-hint"></p>
+      </section>
+      <section class="panel"><h2>${t('prPaper')}</h2>
+        <label>${t('prTemplate')}<select id="prTemplate" disabled></select></label>
+        <p id="prSelected" class="pr-hint"></p>
+        <div class="row">
+          <button class="btn primary" id="prGenerate" type="button" disabled>${t('prGenerate')}</button>
+          <button class="btn" id="prPrint" type="button" disabled>🖨️ ${t('prPrint')}</button>
+          <button class="btn ghost" id="prOpenTab" type="button" disabled>${t('openNewTab')}</button>
+        </div>
+        <div id="prStatus" role="status" aria-live="polite"></div>
+      </section>
+      <section class="panel"><h2>${t('prPreview')}</h2>
+        <iframe id="prFrame" class="pr-frame" title="${esc(t('prPreview'))}" sandbox="allow-modals allow-same-origin"></iframe>
+      </section>`;
+  },
+
+  /* called by App.render() right after the page HTML is in the DOM */
+  mount() {
+    const s = this.st, el = id => document.getElementById(id);
+    this.renderStudents(); this.renderTemplates(); this.renderSelection(); this.setStatus(s.msg, s.err);
+    if (s.html) el('prFrame').srcdoc = s.html;
+    this.updateButtons();
+
+    el('prConnect').addEventListener('click', () => this.connect());
+    el('prSearchBtn').addEventListener('click', () => this.search());
+    el('prSearch').addEventListener('keydown', e => { if (e.key === 'Enter') this.search(); });
+    ['prKey', 'prStaff'].forEach(id => el(id).addEventListener('keydown', e => { if (e.key === 'Enter') this.connect(); }));
+    el('prTemplate').addEventListener('change', e => { s.code = e.target.value; this.clearPaper(); });
+    el('prStudents').addEventListener('change', e => {
+      const r = e.target.closest('input[name="prStudent"]'); if (!r) return;
+      s.selected = s.students.find(x => String(x.id) === r.value) || null;
+      this.clearPaper(); this.renderStudents(); this.renderSelection();
+    });
+    el('prGenerate').addEventListener('click', () => this.generate());
+    el('prPrint').addEventListener('click', () => { const w = el('prFrame').contentWindow; w.focus(); w.print(); });
+    el('prOpenTab').addEventListener('click', () => {
+      const url = URL.createObjectURL(new Blob([s.html], { type: 'text/html' }));
+      window.open(url, '_blank', 'noopener'); setTimeout(() => URL.revokeObjectURL(url), 60000);
+    });
+
+    if (PrintAPI.key && s.students === null) this.connect();   // reconnect automatically in this browser session
+  },
+
+  /* ----- actions ----- */
+  async connect() {
+    const key = document.getElementById('prKey').value.trim(), staff = document.getElementById('prStaff').value.trim();
+    if (!key) return this.setStatus(t('prKeyNeeded'), true);
+    PrintAPI.saveAccess(key, staff);
+    this.setStatus(t('prLoading'));
+    try {
+      const templates = await PrintAPI.templates();
+      this.st.templates = templates;
+      if (!templates.some(x => x.code === this.st.code)) this.st.code = templates[0] ? templates[0].code : '';
+      this.renderTemplates();
+      await this.search();
+    } catch (e) { this.setStatus(e.message, true); }
+  },
+  async search() {
+    const s = this.st, input = document.getElementById('prSearch'); if (!input) return;
+    s.q = input.value.trim(); this.setStatus(t('prLoading'));
+    try {
+      s.students = await PrintAPI.students(s.q);
+      if (s.selected && !s.students.some(x => x.id === s.selected.id)) { s.selected = null; this.clearPaper(); }
+      this.renderStudents(); this.renderSelection(); this.setStatus('');
+    } catch (e) { this.setStatus(e.message, true); }
+  },
+  async generate() {
+    const s = this.st; if (!s.selected || !s.code) return;
+    this.setStatus(t('prLoading')); document.getElementById('prGenerate').disabled = true;
+    try {
+      s.html = await PrintAPI.paper(s.selected.id, s.code);
+      const f = document.getElementById('prFrame'); if (f) f.srcdoc = s.html;
+      this.setStatus(t('prReady'));
+    } catch (e) {
+      s.html = ''; const f = document.getElementById('prFrame'); if (f) f.srcdoc = '';
+      this.setStatus(e.message, true);
+    }
+    this.updateButtons();
+  },
+  clearPaper() {
+    const s = this.st; s.html = '';
+    const f = document.getElementById('prFrame'); if (f) f.srcdoc = '';
+    this.setStatus(''); this.updateButtons();
+  },
+
+  /* ----- rendering helpers (every dynamic value goes through esc()) ----- */
+  renderStudents() {
+    const s = this.st, box = document.getElementById('prStudents'), count = document.getElementById('prCount'); if (!box) return;
+    if (s.students === null) { box.innerHTML = ''; count.textContent = ''; return; }
+    if (!s.students.length) { box.innerHTML = `<div class="panel empty">${t('prNoMatch')}</div>`; count.textContent = ''; return; }
+    box.innerHTML = `<div class="tablewrap"><table class="tbl"><thead><tr><th></th><th>${t('studentId')}</th><th>${t('fullName')}</th><th>${t('nationality')}</th><th>${t('prStatus')}</th></tr></thead><tbody>
+      ${s.students.map(x => {
+        const on = s.selected && s.selected.id === x.id;
+        return `<tr class="${on ? 'pr-sel' : ''}"><td><input class="pr-radio" type="radio" name="prStudent" value="${esc(x.id)}" ${on ? 'checked' : ''} aria-label="${esc(x.fullName)}"></td>
+          <td>${esc(x.id)}</td><td dir="auto">${esc(x.fullName)}</td><td>${esc(x.nationality)}</td><td>${esc(x.status)}</td></tr>`;
+      }).join('')}</tbody></table></div>`;
+    count.textContent = t('prCount').replace('{n}', s.students.length);
+  },
+  renderTemplates() {
+    const s = this.st, sel = document.getElementById('prTemplate'); if (!sel) return;
+    const list = s.templates || [];
+    sel.innerHTML = list.map(x => `<option value="${esc(x.code)}" ${x.code === s.code ? 'selected' : ''}>${esc(x.name)}</option>`).join('');
+    sel.disabled = !list.length; this.updateButtons();
+  },
+  renderSelection() {
+    const s = this.st, p = document.getElementById('prSelected'); if (!p) return;
+    p.textContent = s.selected ? `${t('prSelected')}: ${s.selected.fullName} (#${s.selected.id})` : t('prNoSelection');
+    this.updateButtons();
+  },
+  updateButtons() {
+    const s = this.st, b = id => document.getElementById(id); if (!b('prGenerate')) return;
+    b('prGenerate').disabled = !(s.selected && s.code);
+    b('prPrint').disabled = !s.html; b('prOpenTab').disabled = !s.html;
+  },
+  setStatus(msg, isErr = false) {
+    const s = this.st; s.msg = msg || ''; s.err = !!isErr;
+    const box = document.getElementById('prStatus'); if (!box) return;
+    box.innerHTML = msg ? `<div class="alert ${isErr ? 'err-box' : 'ok-box'}">${esc(msg)}</div>` : '';
+  }
+};

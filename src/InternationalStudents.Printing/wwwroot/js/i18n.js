@@ -1,0 +1,102 @@
+/* English / Arabic dictionary (FR16). Add keys here; use t('key') everywhere. */
+const I18N = {
+  en: {
+    appName: 'International Students Portal',
+    uni: 'Kafr El-Sheikh University',
+    signIn: 'Sign in', signOut: 'Sign out', username: 'Username', password: 'Password',
+    forgot: 'Forgot password?', resetTitle: 'Reset password', resetIntro: 'Enter your registered email and we will send you a reset link.',
+    email: 'Email', sendLink: 'Send reset link', backToLogin: 'Back to sign in',
+    newPassword: 'New password', confirmPassword: 'Confirm password', saveNewPassword: 'Save new password',
+    badLogin: 'Wrong username or password.', emailNotFound: 'This email is not registered. Nothing was sent.',
+    resetSent: 'A reset link was sent to your email.', demoLink: 'Demo mode: open this link to continue',
+    linkExpired: 'This link is expired or invalid. Please request a new one.', pwMismatch: 'Passwords do not match.', pwShort: 'Password must be at least 4 characters.',
+    pwChanged: 'Password changed. You can sign in now.',
+    sessionExpired: 'You were signed out after inactivity.',
+    demoAccounts: 'Demo accounts', student: 'Student', staff: 'Student Affairs',
+    hello: 'Welcome', chooseService: 'Choose a service', dashboard: 'Dashboard', students: 'Students', review: 'Review', reports: 'Reports', notifications: 'Notifications', meetings: 'Meetings',
+    // services
+    'svc.medical': 'Medical Examination', 'svc.enrollment': 'Enrollment Fees', 'svc.book': 'Book Fees', 'svc.residency': 'Residency Fees', 'svc.additional': 'Additional Fees',
+    'svc.medical.desc': 'Complete the required medical tests at the university clinic.',
+    'svc.enrollment.desc': 'Yearly tuition / enrollment payment.',
+    'svc.book.desc': 'Pay for your course books.',
+    'svc.residency.desc': 'Keep your residency status valid.',
+    'svc.additional.desc': 'Extra fees added by Student Affairs.',
+    'st.notstarted': 'Not started', 'st.pending': 'Pending review', 'st.completed': 'Completed', 'st.rejected': 'Rejected', 'st.none': 'Nothing due',
+    amountDue: 'Amount due', currency: 'USD', details: 'Details', steps: 'What to do', back: 'Back',
+    step1: 'Print the paper.', step2: 'Pay the fees / complete the requirement and sign the paper.', step3: 'Upload the signed paper or receipt (PDF or image).', step4: 'Wait for Student Affairs to review it.',
+    medicalReq: 'Required: blood test, chest X-ray, general check-up. Go to the university clinic (Building B, Floor 1), Sunday–Thursday, 9:00–14:00.',
+    print: 'Print paper', upload: 'Upload signed paper / receipt', reupload: 'Upload again', chooseFile: 'Choose file', uploaded: 'Uploaded document', viewFile: 'View file',
+    badFile: 'File type not allowed. Please upload a PDF, PNG or JPG.', fileBig: 'File is too large (max 1.5 MB).', uploadOk: 'Uploaded. Status: pending review.',
+    rejectedReason: 'Rejected by staff. Reason', noFees: 'You have no additional fees.', feeName: 'Fee name', amount: 'Amount', date: 'Date', time: 'Time', purpose: 'Purpose', location: 'Location',
+    noNotifs: 'No notifications yet.', viaEmail: 'sent by email', markRead: 'Mark all as read', noMeetings: 'No meetings scheduled.', upcomingMeetings: 'Upcoming meetings',
+    // paper
+    paperTitle: 'Payment / Service Form', studentName: 'Student name', studentId: 'Student ID', nationality: 'Nationality', passport: 'Passport no.', program: 'Program', service: 'Service',
+    studentSign: 'Student signature', stampSign: 'Cashier / stamp', printedOn: 'Printed on', instructions: 'Pay the amount, sign this paper, then upload it to the portal.',
+    // staff
+    addStudent: 'Add student', editStudent: 'Edit student', search: 'Search by name, ID, username, nationality…', allStatuses: 'All statuses', filterService: 'Service',
+    fullName: 'Full name', phone: 'Phone', dob: 'Date of birth', save: 'Save', cancel: 'Cancel', actions: 'Actions', open: 'Open', edit: 'Edit',
+    needsAction: 'Needs action', totalStudents: 'Total students', pendingDocs: 'Documents to review', totalCollected: 'Collected', totalOutstanding: 'Outstanding',
+    required: 'Required field.', invalidEmail: 'Invalid email.', dupStudent: 'A student with this ID, username or email already exists.', studentSaved: 'Student saved.', studentCreated: 'Student registered. Login details are ready.',
+    defaultPw: 'Initial password', amountsSection: 'Fees (USD)',
+    addFee: 'Add additional fee', feeAdded: 'Fee added and student notified by email.', amountInvalid: 'Enter a valid amount.',
+    schedule: 'Schedule meeting', meetingSaved: 'Meeting saved and email sent to the student.', pastDate: 'Date must not be in the past.',
+    approve: 'Approve', reject: 'Reject', reason: 'Reason', reasonNeeded: 'Please enter a reason.', approved: 'Approved. Student notified.', rejectedDone: 'Rejected. Student notified.',
+    queueEmpty: 'No documents waiting for review. 🎉', submitted: 'Uploaded',
+    reportTitle: 'Fees report (paid / unpaid per student)', paid: 'Paid', unpaid: 'Unpaid', total: 'Total', exportCsv: 'Export CSV', noResults: 'No results.',
+    studentRecord: 'Student record', servicesStatus: 'Services status', fees: 'Fees', noDoc: 'No document', outbox: 'Email sent',
+    sureLogout: 'Sign out?', close: 'Close', openNewTab: 'Open in new tab', lang: 'العربية',
+    footer: 'Front-end prototype – data is stored in your browser only until the backend is connected.'
+  },
+  ar: {
+    appName: 'بوابة الطلاب الوافدين',
+    uni: 'جامعة كفر الشيخ',
+    signIn: 'تسجيل الدخول', signOut: 'تسجيل الخروج', username: 'اسم المستخدم', password: 'كلمة المرور',
+    forgot: 'نسيت كلمة المرور؟', resetTitle: 'استعادة كلمة المرور', resetIntro: 'اكتب بريدك الإلكتروني المسجل وسنرسل لك رابط الاستعادة.',
+    email: 'البريد الإلكتروني', sendLink: 'إرسال رابط الاستعادة', backToLogin: 'العودة لتسجيل الدخول',
+    newPassword: 'كلمة المرور الجديدة', confirmPassword: 'تأكيد كلمة المرور', saveNewPassword: 'حفظ كلمة المرور',
+    badLogin: 'اسم المستخدم أو كلمة المرور غير صحيحة.', emailNotFound: 'هذا البريد غير مسجل. لم يتم إرسال شيء.',
+    resetSent: 'تم إرسال رابط الاستعادة إلى بريدك.', demoLink: 'وضع تجريبي: افتح هذا الرابط للمتابعة',
+    linkExpired: 'الرابط منتهي أو غير صالح. اطلب رابطًا جديدًا.', pwMismatch: 'كلمتا المرور غير متطابقتين.', pwShort: 'كلمة المرور 4 أحرف على الأقل.',
+    pwChanged: 'تم تغيير كلمة المرور. يمكنك تسجيل الدخول الآن.',
+    sessionExpired: 'تم تسجيل خروجك بسبب عدم النشاط.',
+    demoAccounts: 'حسابات تجريبية', student: 'طالب', staff: 'شؤون الطلاب',
+    hello: 'مرحبًا', chooseService: 'اختر الخدمة', dashboard: 'الرئيسية', students: 'الطلاب', review: 'المراجعة', reports: 'التقارير', notifications: 'الإشعارات', meetings: 'الاجتماعات',
+    'svc.medical': 'الكشف الطبي', 'svc.enrollment': 'رسوم القيد', 'svc.book': 'رسوم الكتب', 'svc.residency': 'رسوم الإقامة', 'svc.additional': 'رسوم إضافية',
+    'svc.medical.desc': 'أكمل الفحوصات الطبية المطلوبة في العيادة الجامعية.',
+    'svc.enrollment.desc': 'سداد المصروفات / رسوم القيد السنوية.',
+    'svc.book.desc': 'سداد ثمن الكتب الدراسية.',
+    'svc.residency.desc': 'حافظ على صلاحية إقامتك.',
+    'svc.additional.desc': 'رسوم إضافية أضافتها شؤون الطلاب.',
+    'st.notstarted': 'لم تبدأ', 'st.pending': 'قيد المراجعة', 'st.completed': 'مكتملة', 'st.rejected': 'مرفوضة', 'st.none': 'لا يوجد مستحقات',
+    amountDue: 'المبلغ المستحق', currency: 'دولار', details: 'التفاصيل', steps: 'الخطوات المطلوبة', back: 'رجوع',
+    step1: 'اطبع الورقة.', step2: 'سدّد الرسوم / أنجز المطلوب ووقّع على الورقة.', step3: 'ارفع الورقة الموقعة أو الإيصال (PDF أو صورة).', step4: 'انتظر مراجعة شؤون الطلاب.',
+    medicalReq: 'المطلوب: تحليل دم، أشعة على الصدر، كشف عام. التوجه للعيادة الجامعية (مبنى B، الدور الأول)، من الأحد إلى الخميس، 9:00–14:00.',
+    print: 'اطبع الورقة', upload: 'ارفع الورقة الموقعة / الإيصال', reupload: 'ارفع مرة أخرى', chooseFile: 'اختر ملفًا', uploaded: 'المستند المرفوع', viewFile: 'عرض الملف',
+    badFile: 'نوع الملف غير مسموح. ارفع PDF أو PNG أو JPG.', fileBig: 'حجم الملف كبير (الحد الأقصى 1.5 ميجا).', uploadOk: 'تم الرفع. الحالة: قيد المراجعة.',
+    rejectedReason: 'تم الرفض من الموظف. السبب', noFees: 'لا توجد رسوم إضافية عليك.', feeName: 'اسم الرسم', amount: 'المبلغ', date: 'التاريخ', time: 'الوقت', purpose: 'الغرض', location: 'المكان',
+    noNotifs: 'لا توجد إشعارات.', viaEmail: 'أُرسل بالبريد', markRead: 'تعليم الكل كمقروء', noMeetings: 'لا توجد اجتماعات.', upcomingMeetings: 'الاجتماعات القادمة',
+    paperTitle: 'نموذج سداد / خدمة', studentName: 'اسم الطالب', studentId: 'رقم الطالب', nationality: 'الجنسية', passport: 'رقم الجواز', program: 'البرنامج', service: 'الخدمة',
+    studentSign: 'توقيع الطالب', stampSign: 'الخزينة / الختم', printedOn: 'تاريخ الطباعة', instructions: 'سدّد المبلغ ووقّع هذه الورقة ثم ارفعها على البوابة.',
+    addStudent: 'إضافة طالب', editStudent: 'تعديل طالب', search: 'ابحث بالاسم أو الرقم أو اسم المستخدم أو الجنسية…', allStatuses: 'كل الحالات', filterService: 'الخدمة',
+    fullName: 'الاسم الكامل', phone: 'الهاتف', dob: 'تاريخ الميلاد', save: 'حفظ', cancel: 'إلغاء', actions: 'إجراءات', open: 'فتح', edit: 'تعديل',
+    needsAction: 'يحتاج إجراء', totalStudents: 'إجمالي الطلاب', pendingDocs: 'مستندات للمراجعة', totalCollected: 'المحصّل', totalOutstanding: 'المتبقي',
+    required: 'حقل مطلوب.', invalidEmail: 'بريد غير صالح.', dupStudent: 'يوجد طالب بنفس الرقم أو اسم المستخدم أو البريد.', studentSaved: 'تم حفظ الطالب.', studentCreated: 'تم تسجيل الطالب. بيانات الدخول جاهزة.',
+    defaultPw: 'كلمة المرور المبدئية', amountsSection: 'الرسوم (دولار)',
+    addFee: 'إضافة رسم إضافي', feeAdded: 'تمت إضافة الرسم وإرسال بريد للطالب.', amountInvalid: 'أدخل مبلغًا صحيحًا.',
+    schedule: 'حجز اجتماع', meetingSaved: 'تم حفظ الاجتماع وإرسال بريد للطالب.', pastDate: 'لا يمكن اختيار تاريخ سابق.',
+    approve: 'قبول', reject: 'رفض', reason: 'السبب', reasonNeeded: 'اكتب السبب من فضلك.', approved: 'تم القبول وإشعار الطالب.', rejectedDone: 'تم الرفض وإشعار الطالب.',
+    queueEmpty: 'لا توجد مستندات تنتظر المراجعة. 🎉', submitted: 'وقت الرفع',
+    reportTitle: 'تقرير الرسوم (المدفوع / غير المدفوع لكل طالب)', paid: 'مدفوع', unpaid: 'غير مدفوع', total: 'الإجمالي', exportCsv: 'تصدير CSV', noResults: 'لا توجد نتائج.',
+    studentRecord: 'ملف الطالب', servicesStatus: 'حالة الخدمات', fees: 'الرسوم', noDoc: 'لا يوجد مستند', outbox: 'البريد المرسل',
+    sureLogout: 'تسجيل الخروج؟', close: 'إغلاق', openNewTab: 'فتح في تبويب جديد', lang: 'English',
+    footer: 'نسخة تجريبية للفرونت اند – البيانات محفوظة في متصفحك فقط لحين ربط الباك إند.'
+  }
+};
+
+let LANG = localStorage.getItem('uisys_lang') || 'en';
+function t(k) { return (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; }
+function setLang(l) {
+  LANG = l; localStorage.setItem('uisys_lang', l);
+  document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+}
+setLang(LANG);
