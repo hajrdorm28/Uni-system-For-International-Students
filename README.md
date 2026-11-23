@@ -434,3 +434,9 @@ direction BT
 
 	classDef Ash :,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000
 ```
+
+
+#ERD
+
+<img width="730" height="903" alt="uni_international" src="https://github.com/user-attachments/assets/4ab01bf5-d6f3-4d06-b496-8c49045edbc8" />
+
