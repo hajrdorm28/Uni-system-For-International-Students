@@ -436,7 +436,7 @@ direction BT
 ```
 #ERD
 
-```
+```mermaid
 ---
 config:
   theme: forest
