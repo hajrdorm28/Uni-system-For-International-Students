@@ -434,9 +434,82 @@ direction BT
 
 	classDef Ash :,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000
 ```
-
-
 #ERD
+
+```
+---
+config:
+  theme: forest
+  look: handDrawn
+  layout: elk
+---
+erDiagram
+    USER {
+        int id PK
+        string full_name
+        string email UK
+        string role
+    }
+
+    STUDENT {
+        int user_id PK,FK
+        string nationality
+        string passport_number UK
+        date date_of_birth
+        string status
+    }
+
+    PRINT_TEMPLATE {
+        int id PK
+        string code UK
+        string name
+        string description
+        string payment_purpose
+        text body_html
+        int version
+        boolean is_active
+    }
+
+    PAYMENT {
+        int id PK
+        decimal amount
+        string purpose
+        string status
+        int student_id FK
+    }
+
+    TEMPLATE_FIELD {
+        int id PK
+        int template_id FK
+        string placeholder_key
+        string source_entity
+        string source_column
+        string format_string
+        string default_value
+        boolean is_required
+    }
+
+    PRINT_LOG {
+        bigint id PK
+        string reference_no UK
+        int student_id FK
+        int template_id FK
+        int template_version
+        int requested_by_user_id FK
+        string status
+        string error_message
+        datetime printed_at
+    }
+
+    USER ||--o| STUDENT : "is a"
+    USER ||--o{ PRINT_LOG : "requested by"
+    STUDENT ||--o{ PAYMENT : "makes"
+    PRINT_TEMPLATE ||--o{ TEMPLATE_FIELD : "defines"
+    PRINT_TEMPLATE ||--o{ PRINT_LOG : "used in"
+    STUDENT ||--o{ PRINT_LOG : "generates"
+```
+
+#EER
 
 <img width="730" height="903" alt="uni_international" src="https://github.com/user-attachments/assets/4ab01bf5-d6f3-4d06-b496-8c49045edbc8" />
 
