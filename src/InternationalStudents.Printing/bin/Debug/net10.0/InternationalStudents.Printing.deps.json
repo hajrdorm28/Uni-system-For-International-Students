@@ -1,0 +1,41 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "InternationalStudents.Printing/1.0.0": {
+        "dependencies": {
+          "MySqlConnector": "3.0.0"
+        },
+        "runtime": {
+          "InternationalStudents.Printing.dll": {}
+        }
+      },
+      "MySqlConnector/3.0.0": {
+        "runtime": {
+          "lib/net10.0/MySqlConnector.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "InternationalStudents.Printing/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MySqlConnector/3.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ioYpdWl4xa9iVNsnWzIsYUuSr5MJ3KRZJ69QvzQdfDd1ax6s6GDXs65gCTt/eY/fzG4IiYxCgiu5urWUfk3AwQ==",
+      "path": "mysqlconnector/3.0.0",
+      "hashPath": "mysqlconnector.3.0.0.nupkg.sha512"
+    }
+  }
+}

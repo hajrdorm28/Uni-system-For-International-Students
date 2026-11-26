@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "bbEa8jttdEA=",
+  "success": true,
+  "projectFilePath": "D:\\Uni-system-For-International-Students\\src\\InternationalStudents.Printing\\InternationalStudents.Printing.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\it shop\\.nuget\\packages\\mysqlconnector\\3.0.0\\mysqlconnector.3.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
